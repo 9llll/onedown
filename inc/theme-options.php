@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if (! defined('ABSPATH')) {
     exit;
@@ -1768,58 +1768,57 @@ CSF::createSection($prefix, array(
 // =====================
 // 商城&付费
 // =====================
-if (function_exists('onedown_license_is_active') && onedown_license_is_active()) {
-    CSF::createSection($prefix, array(
-        'id'    => 'shop',
-        'title' => __('商城&付费', 'onedown'),
-        'icon'  => 'fas fa-shopping-cart',
-    ));
+CSF::createSection($prefix, array(
+    'id'    => 'shop',
+    'title' => __('商城&付费', 'onedown'),
+    'icon'  => 'fas fa-shopping-cart',
+));
 
-    // -- 商城配置
-    CSF::createSection($prefix, array(
-        'id'     => 'shop-config',
-        'parent' => 'shop',
-        'title'  => __('商城配置', 'onedown'),
-        'fields' => array(
-            array(
-                'id'      => 'guest_purchase_enabled',
-                'type'    => 'switcher',
-                'title'   => __('启用免登录购买', 'onedown'),
-                'subtitle' => __('开启后未登录用户可直接购买资源，购买记录通过浏览器缓存临时保存', 'onedown'),
-                'default' => false,
-            ),
-            array(
-                'id'         => 'guest_purchase_expire_days',
-                'type'       => 'text',
-                'title'      => __('免登录购买记录保留天数', 'onedown'),
-                'subtitle'   => __('超过该天数后购买记录自动失效，填 0 表示永久保留', 'onedown'),
-                'default'    => '30',
-                'dependency' => array('guest_purchase_enabled', '==', 'true'),
-            ),
-            array(
-                'id'      => 'guest_purchase_reminder',
-                'type'    => 'textarea',
-                'title'   => __('免登录购买提示', 'onedown'),
-                'subtitle' => __('未登录用户在购买页面显示的说明文字', 'onedown'),
-                'default' => '未登录购买记录将保存在当前浏览器中，建议注册账号以免丢失。',
-            ),
-            array(
-                'id'      => 'currency_symbol',
-                'type'    => 'text',
-                'title'   => __('货币符号', 'onedown'),
-                'subtitle' => __('用于前台价格显示', 'onedown'),
-                'default'  => '楼',
-                'desc'     => __('例如：¥、元、积分、楼币等', 'onedown'),
-            ),
-            array(
-                'id'      => 'free_resource_require_login',
-                'type'    => 'switcher',
-                'title'   => __('免费资源需登录', 'onedown'),
-                'subtitle' => __('开启后即使是免费资源，也需要登录后才能下载', 'onedown'),
-                'default' => true,
-            ),
+// -- 商城配置
+CSF::createSection($prefix, array(
+    'id'     => 'shop-config',
+    'parent' => 'shop',
+    'title'  => __('商城配置', 'onedown'),
+    'fields' => array(
+        array(
+            'id'      => 'guest_purchase_enabled',
+            'type'    => 'switcher',
+            'title'   => __('启用免登录购买', 'onedown'),
+            'subtitle' => __('开启后未登录用户可直接购买资源，购买记录通过浏览器缓存临时保存', 'onedown'),
+            'default' => false,
         ),
-    ));
+        array(
+            'id'         => 'guest_purchase_expire_days',
+            'type'       => 'text',
+            'title'      => __('免登录购买记录保留天数', 'onedown'),
+            'subtitle'   => __('超过该天数后购买记录自动失效，填 0 表示永久保留', 'onedown'),
+            'default'    => '30',
+            'dependency' => array('guest_purchase_enabled', '==', 'true'),
+        ),
+        array(
+            'id'      => 'guest_purchase_reminder',
+            'type'    => 'textarea',
+            'title'   => __('免登录购买提示', 'onedown'),
+            'subtitle' => __('未登录用户在购买页面显示的说明文字', 'onedown'),
+            'default' => '未登录购买记录将保存在当前浏览器中，建议注册账号以免丢失。',
+        ),
+        array(
+            'id'      => 'currency_symbol',
+            'type'    => 'text',
+            'title'   => __('货币符号', 'onedown'),
+            'subtitle' => __('用于前台价格显示', 'onedown'),
+            'default'  => '楼',
+            'desc'     => __('例如：¥、元、积分、楼币等', 'onedown'),
+        ),
+        array(
+            'id'      => 'free_resource_require_login',
+            'type'    => 'switcher',
+            'title'   => __('免费资源需登录', 'onedown'),
+            'subtitle' => __('开启后即使是免费资源，也需要登录后才能下载', 'onedown'),
+            'default' => true,
+        ),
+    ),
+));
 
     // -- 广告自助投放
     CSF::createSection($prefix, array(
@@ -2766,11 +2765,6 @@ if (function_exists('onedown_license_is_active') && onedown_license_is_active())
                 'type'    => 'subheading',
                 'content' => __('接口信息', 'onedown'),
             ),
-            array(
-                'type'       => 'content',
-                'content'    => onedown_remote_publish_doc_html(),
-                'dependency' => array('remote_pub_enabled', '==', 'true'),
-            ),
 
             // 鈹€鈹€ 鉴权 鈹€鈹€
             array(
@@ -3233,29 +3227,7 @@ if (function_exists('onedown_license_is_active') && onedown_license_is_active())
             ),
         ),
     ));
-}
-
 // =====================
-// 授权&更新
-// =====================
-CSF::createSection($prefix, array(
-    'id'    => 'license-update',
-    'title' => __('授权&更新', 'onedown'),
-    'icon'  => 'fas fa-refresh',
-));
-
-CSF::createSection($prefix, array(
-    'id'     => 'license-update-license',
-    'parent' => 'license-update',
-    'title'  => __('主题授权', 'onedown'),
-    'fields' => array(
-        array(
-            'id'       => 'license_activator_panel',
-            'type'     => 'callback',
-            'function' => 'onedown_render_license_activator_panel',
-        ),
-    ),
-));
 
 if (file_exists(trailingslashit(get_template_directory()) . 'version.json')) {
 CSF::createSection($prefix, array(
