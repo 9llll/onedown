@@ -8,6 +8,13 @@ if (! defined('ONEDOWN_TEXT_DOMAIN')) {
     define('ONEDOWN_TEXT_DOMAIN', 'onedown');
 }
 
+// 永久授权放行核心函数
+if (! function_exists('onedown_license_is_active')) :
+function onedown_license_is_active(){
+    return true;
+}
+endif;
+
 if (! function_exists('onedown_bootstrap_version')) :
     function onedown_bootstrap_version()
     {
@@ -35,51 +42,6 @@ endif;
 define('ONEDOWN_PATH', trailingslashit(get_template_directory()));
 define('ONEDOWN_URL', trailingslashit(get_template_directory_uri()));
 define('ONEDOWN_VERSION', onedown_bootstrap_version());
-define('ONEDOWN_LICENSE_SERVER', 'H+9fnFbJKISDzy17IGoBsSRm2m8Jb6EPTDd1wZCeWjZaoYIxJLre9o+ObQy1rfSz');
-
-if (! function_exists('onedown_get_license_server_url')) :
-    function onedown_get_license_server_url()
-    {
-        if (! defined('ONEDOWN_LICENSE_SERVER')) {
-            return '';
-        }
-
-        $salt = 'VEk%F&T#^Fle!bg!';
-        $decoded = base64_decode(ONEDOWN_LICENSE_SERVER, true);
-        if ($decoded === false) {
-            return '';
-        }
-
-        $method = 'aes-256-cbc';
-        $iv_length = openssl_cipher_iv_length($method);
-        if (strlen($decoded) < $iv_length) {
-            return '';
-        }
-
-        $iv = substr($decoded, 0, $iv_length);
-        $ciphertext = substr($decoded, $iv_length);
-        $key = hash('sha256', $salt, true);
-        $server = (string) openssl_decrypt($ciphertext, $method, $key, OPENSSL_RAW_DATA, $iv);
-
-        return rtrim($server, '/');
-    }
-endif;
-
-if (! function_exists('onedown_get_default_update_manifest_url')) :
-    function onedown_get_default_update_manifest_url()
-    {
-        $server = onedown_get_license_server_url();
-        if ($server === '') {
-            return '';
-        }
-
-        if (strpos($server, 'http://') !== 0 && strpos($server, 'https://') !== 0) {
-            $server = 'https://' . $server;
-        }
-
-        return trailingslashit($server) . 'wp-content/themes/onedown/version.json';
-    }
-endif;
 
 /**
  * 获取主题设置选项（带静态缓存，每页只从数据库读取一次）
@@ -158,8 +120,8 @@ if (! function_exists('onedown_is_light_rest_request')) :
     }
 endif;
 
-// 加载远程发布接口文档函数
-onedown_require_file('/inc/remote-publish.php');
+// 注释远程授权发布接口，移除远程校验
+// onedown_require_file('/inc/remote-publish.php');
 
 // 加载主题引导类并启动
 if (! onedown_is_light_rest_request()) {
@@ -1437,41 +1399,41 @@ if (! function_exists('onedown_footer_default_html_url')) :
             return $url;
         }
 
-        $home  = wp_parse_url(home_url('/'));
-        $parts = wp_parse_url($url);
-        if (! is_array($parts)) {
-            return $url;
-        }
-
-        if (! empty($parts['host']) && ! empty($home['host']) && strcasecmp($parts['host'], $home['host']) !== 0) {
-            return $url;
-        }
-
-        $path = isset($parts['path']) ? trim($parts['path'], '/') : '';
-        if ($path === '' || preg_match('#^(wp-admin|wp-content|wp-includes|wp-json|sitemap\.xml)#i', $path)) {
-            return $url;
-        }
-
-        $path = preg_replace('#^category/#i', '', $path);
-        $path = preg_replace('#/(default)?index\.html$#i', '', $path);
-        $path = preg_replace('#/default\.html$#i', '', $path);
-        $path = preg_replace('#\.html$#i', '', $path);
-        $path = trim($path, '/');
-
-        if ($path === '') {
-            return $url;
-        }
-
-        $normalized = home_url('/' . $path . '/default.html');
-        if (! empty($parts['query'])) {
-            $normalized .= '?' . $parts['query'];
-        }
-        if (! empty($parts['fragment'])) {
-            $normalized .= '#' . $parts['fragment'];
-        }
-
-        return $normalized;
+            $home  = wp_parse_url(home_url('/'));
+    $parts = wp_parse_url($url);
+    if (! is_array($parts)) {
+        return $url;
     }
+
+    if (! empty($parts['host']) && ! empty($home['host']) && strcasecmp($parts['host'], $home['host']) !== 0) {
+        return $url;
+    }
+
+    $path = isset($parts['path']) ? trim($parts['path'], '/') : '';
+    if ($path === '' || preg_match('#^(wp-admin|wp-content|wp-includes|wp-json|sitemap\.xml)#i', $path)) {
+        return $url;
+    }
+
+    $path = preg_replace('#^category/#i', '', $path);
+    $path = preg_replace('#/(default)?index\.html$#i', '', $path);
+    $path = preg_replace('#/default\.html$#i', '', $path);
+    $path = preg_replace('#\.html$#i', '', $path);
+    $path = trim($path, '/');
+
+    if ($path === '') {
+        return $url;
+    }
+
+    $normalized = home_url('/' . $path . '/default.html');
+    if (! empty($parts['query'])) {
+        $normalized .= '?' . $parts['query'];
+    }
+    if (! empty($parts['fragment'])) {
+        $normalized .= '#' . $parts['fragment'];
+    }
+
+    return $normalized;
+}
 endif;
 
 if (! function_exists('onedown_footer_menu_default_html_urls')) :
@@ -1588,3 +1550,4 @@ endif;
 if (function_exists('onedown_render_single_post_edit_fab')) {
     remove_action('wp_footer', 'onedown_render_single_post_edit_fab', 99);
 }
+?>
